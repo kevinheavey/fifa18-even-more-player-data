@@ -12,3 +12,11 @@ def get_all_traits_and_specialities():
     all_traits = [*traits1, *traits2]
     all_specialities = list(soup.find(attrs={'name': 'sc[]'}).stripped_strings)
     return {'traits': all_traits, 'specialities': all_specialities}
+
+def save_constants():
+    positions = ['RS', 'RW', 'RF', 'RAM', 'RCM', 'RM', 'RDM', 'RCB', 'RB',
+                 'RWB', 'ST', 'LW', 'CF', 'CAM', 'CM', 'LM', 'CDM', 'CB',
+                 'LB', 'LWB', 'LS', 'LF', 'LAM', 'LCM', 'LDM', 'LCB']
+    traits_specialities_dict = get_all_traits_and_specialities()
+    constants_dict = {'positions':positions, **traits_specialities_dict}
+    return constants_dict
