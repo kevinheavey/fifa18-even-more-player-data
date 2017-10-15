@@ -5,6 +5,8 @@ FullDataset.csv
 player_data.csv
 PlayerAttributeData.csv
 overview_htmls.pkl
+crawler/__pycache__
+data/pickled_html
 
 # User-specific stuff:
 .idea/**/workspace.xml

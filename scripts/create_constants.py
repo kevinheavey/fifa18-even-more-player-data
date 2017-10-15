@@ -20,6 +20,11 @@ def get_all_traits_and_specialities():
     all_specialities = list(soup.find(attrs={'name': 'sc[]'}).stripped_strings)
     return {'traits': all_traits, 'specialities': all_specialities}
 
+def get_headline_attribute_names():
+    url = 'https://sofifa.com/player/158023'
+    html = requests.get(url).text
+    strainer = SoupStrainer('script')
+
 def get_all_constants():
     positions = ['RS', 'RW', 'RF', 'RAM', 'RCM', 'RM', 'RDM', 'RCB', 'RB',
                  'RWB', 'ST', 'LW', 'CF', 'CAM', 'CM', 'LM', 'CDM', 'CB',
@@ -35,7 +40,10 @@ def save_constants():
         json.dump(constants_dict)
 
 def update_constants():
-    shutil.move(CURRENT_PATH, PREVIOUS_PATH)
+    try:
+        shutil.move(CURRENT_PATH, PREVIOUS_PATH)
+    except FileNotFoundError:
+        pass
     save_constants()
 
 
