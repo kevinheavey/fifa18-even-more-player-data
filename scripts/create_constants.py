@@ -1,4 +1,5 @@
 import requests
+import json
 from bs4 import BeautifulSoup, SoupStrainer
 
 
@@ -13,10 +14,20 @@ def get_all_traits_and_specialities():
     all_specialities = list(soup.find(attrs={'name': 'sc[]'}).stripped_strings)
     return {'traits': all_traits, 'specialities': all_specialities}
 
-def save_constants():
+def get_all_constants():
     positions = ['RS', 'RW', 'RF', 'RAM', 'RCM', 'RM', 'RDM', 'RCB', 'RB',
                  'RWB', 'ST', 'LW', 'CF', 'CAM', 'CM', 'LM', 'CDM', 'CB',
                  'LB', 'LWB', 'LS', 'LF', 'LAM', 'LCM', 'LDM', 'LCB']
     traits_specialities_dict = get_all_traits_and_specialities()
     constants_dict = {'positions':positions, **traits_specialities_dict}
     return constants_dict
+
+def save_constants():
+    constants_dict = get_all_constants()
+    with open('constants.json', 'w') as f:
+        json.dump(constants_dict)
+
+if __name__ == '__main__':
+    save_constants()
+
+
