@@ -70,7 +70,6 @@ def get_overview_urls():
         urls.append(url)
     return urls
 
-
 def get_player_urls(IDs):
     urls = []
     base_url = 'https://sofifa.com/player/'
@@ -79,12 +78,16 @@ def get_player_urls(IDs):
         urls.append(url)
     return urls
 
-
-def get_player_htmls(IDs, from_file=False):
+def get_player_htmls(IDs, from_file=False, update_files=False):
     urls = get_player_urls(IDs)
-    return _get_htmls(urls, from_file, file_key='player')
+    player_htmls = _get_htmls(urls, from_file, file_key='player')
+    if update_files and not from_file:
+        update_pickled_player_htmls(player_htmls)
+    return player_htmls
 
-
-def get_overview_htmls(from_file=False):
+def get_overview_htmls(from_file=False, update_files=False):
     urls = get_overview_urls()
-    return _get_htmls(urls, from_file, file_key='overview')
+    overview_htmls = _get_htmls(urls, from_file, file_key='overview')
+    if update_files and not from_file:
+        update_pickled_overview_htmls(overview_htmls)
+    return overview_htmls
