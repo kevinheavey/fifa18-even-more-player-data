@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from bs4 import BeautifulSoup, SoupStrainer
-from .utils import parse_headline_attributes, read_constants
+from .utils import parse_headline_attributes, read_constants, convert_currency
 from .html_download import get_player_htmls
 
 def _get_main_soup(soup):
@@ -157,6 +157,17 @@ def parse_player_detailed_data(player_htmls, constants):
                  *constants['traits'],
                  *constants['specialities'],
                  *constants['position_preferences']]
+    df.loc[:, 'Release clause'] = df['Release clause'].pipe(convert_currency)
+    numeric_cols_to_be_converted = ['ID', 'Height_cm', 'Weight_kg'
+                                    *constants['headline_attributes'],
+                                    'International reputation',
+                                    'Skill moves',
+                                    'Weak foot',
+                                    'Work rate att',
+                                    'Work rate def',
+                                    *constants['positions']]
+    for col in numeric_cols_to_be_converted:
+        df.loc[:, col] = pd.to_numeric(df[col])
     return df[col_order]
 
 
