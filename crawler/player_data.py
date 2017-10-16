@@ -165,8 +165,6 @@ def parse_player_detailed_data(player_htmls, constants):
                                     'International reputation',
                                     'Skill moves',
                                     'Weak foot',
-                                    'Work rate att',
-                                    'Work rate def',
                                     *constants['positions']]
     for col in numeric_cols_to_be_converted:
         df.loc[:, col] = pd.to_numeric(df[col])
