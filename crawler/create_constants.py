@@ -3,7 +3,7 @@ import json
 from bs4 import BeautifulSoup, SoupStrainer
 from pathlib import Path
 import shutil
-from utils import parse_headline_attributes
+from .utils import parse_headline_attributes
 
 CONSTANTS_DIR = Path(__file__).parents[1] / 'data/resources/constants/'
 CURRENT_PATH = CONSTANTS_DIR / 'current.json'

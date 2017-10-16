@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup, SoupStrainer
 import pandas as pd
+import numpy as np
 from multiprocessing import Pool, cpu_count
+from .html_download import get_overview_htmls
 
 def parse_single_row(overview_table_row):
 
@@ -54,3 +56,7 @@ def clean_overview_data(df):
             .assign(EUR_value = lambda df: df['value'].pipe(convert_currency),
                                 EUR_wage = lambda df: df['wage'].pipe(convert_currency))
             .drop(['value', 'wage'], axis=1))
+
+def get_overview_data(from_file=False):
+    overview_htmls = get_overview_htmls(from_file)
+    return parse_overview_data(overview_htmls).pipe(clean_overview_data)
