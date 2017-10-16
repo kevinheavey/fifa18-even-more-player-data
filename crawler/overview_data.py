@@ -1,8 +1,11 @@
-from bs4 import BeautifulSoup, SoupStrainer
-import pandas as pd
-import numpy as np
 from multiprocessing import Pool, cpu_count
+
+import pandas as pd
+from bs4 import BeautifulSoup, SoupStrainer
+
+from crawler.utils import convert_currency
 from .html_download import get_overview_htmls
+
 
 def parse_single_row(overview_table_row):
 
@@ -44,17 +47,11 @@ def parse_overview_data(overview_htmls):
         data.extend(sub_list)
     return pd.DataFrame(data)
 
-def convert_currency(curr_col):
-    without_euro_symbol = curr_col.str[1:]
-    unit_symbol = without_euro_symbol.str[-1]
-    numeric_part = np.where(unit_symbol == '0', 0, without_euro_symbol.str[:-1].pipe(pd.to_numeric))
-    multipliers = unit_symbol.replace({'M':1e6, 'K':1e3}).pipe(pd.to_numeric)
-    return numeric_part * multipliers
 
 def clean_overview_data(df):
     return (df.drop_duplicates('ID')
             .assign(EUR_value = lambda df: df['Value'].pipe(convert_currency),
-                                EUR_wage = lambda df: df['Wage'].pipe(convert_currency))
+                    EUR_wage = lambda df: df['Wage'].pipe(convert_currency))
             .drop(['Value', 'Wage'], axis=1))
 
 def get_overview_data(from_file=False, update_files=True):
