@@ -3,7 +3,7 @@ import json
 from bs4 import BeautifulSoup, SoupStrainer
 from pathlib import Path
 import shutil
-from .utils import parse_headline_attributes
+from utils import parse_headline_attributes
 
 CONSTANTS_DIR = Path(__file__).parents[1] / 'data/resources/constants/'
 CURRENT_PATH = CONSTANTS_DIR / 'current.json'
@@ -29,16 +29,27 @@ def get_headline_attribute_names():
     return list(parse_headline_attributes(soup).keys())
 
 
+
 def get_all_constants():
     positions = ['RS', 'RW', 'RF', 'RAM', 'RCM', 'RM', 'RDM', 'RCB', 'RB',
                  'RWB', 'ST', 'LW', 'CF', 'CAM', 'CM', 'LM', 'CDM', 'CB',
                  'LB', 'LWB', 'LS', 'LF', 'LAM', 'LCM', 'LDM', 'LCB']
-    position_preferences = ['is_' + pos for pos in positions]
+    main_attributes = ['Crossing','Finishing','Heading accuracy',
+                       'Short passing','Volleys','Dribbling','Curve',
+                       'Free kick accuracy','Long passing','Ball control',
+                       'Acceleration','Sprint speed','Agility','Reactions',
+                       'Balance','Shot power','Jumping','Stamina','Strength',
+                       'Long shots','Aggression','Interceptions','Positioning',
+                       'Vision','Penalties','Composure','Marking','Standing tackle',
+                       'Sliding tackle','GK diving','GK handling','GK kicking',
+                       'GK positioning','GK reflexes',]
+    position_preferences = ['prefers_' + pos for pos in positions]
     traits_specialities_dict = get_all_traits_and_specialities()
     headline_attribute_names = get_headline_attribute_names()
     constants_dict = {'positions':positions,
                       'position_preferences':position_preferences,
                       'headline_attributes':headline_attribute_names,
+                      'main_attributes':main_attributes
                       **traits_specialities_dict}
     return constants_dict
 
