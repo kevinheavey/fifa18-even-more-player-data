@@ -158,8 +158,10 @@ def parse_player_detailed_data(player_htmls, constants):
                  *constants['specialities'],
                  *constants['position_preferences']]
     df.loc[:, 'Release clause'] = df['Release clause'].pipe(convert_currency)
+    df.loc[:, 'Birth date'] = pd.to_datetime(df['Birth date'], format='%b %d %Y')
     numeric_cols_to_be_converted = ['ID', 'Height_cm', 'Weight_kg',
                                     *constants['headline_attributes'],
+                                    *constants['main_attributes']
                                     'International reputation',
                                     'Skill moves',
                                     'Weak foot',
