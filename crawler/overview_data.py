@@ -17,7 +17,7 @@ def parse_single_row(overview_table_row):
     record_dict['Overall'] = tds[3].text.strip()
     record_dict['Potential'] = tds[4].text.strip()
     record_dict['Club'] = tds[5].find('a').text
-    record_dict['Club_logo'] = tds[5].find('img').get('data-src')
+    record_dict['Club logo'] = tds[5].find('img').get('data-src')
     record_dict['Value'] = tds[7].text
     record_dict['Wage'] = tds[8].text
     record_dict['Special'] = tds[17].text
