@@ -53,9 +53,9 @@ def convert_currency(curr_col):
 
 def clean_overview_data(df):
     return (df.drop_duplicates('ID')
-            .assign(EUR_value = lambda df: df['value'].pipe(convert_currency),
-                                EUR_wage = lambda df: df['wage'].pipe(convert_currency))
-            .drop(['value', 'wage'], axis=1))
+            .assign(EUR_value = lambda df: df['Value'].pipe(convert_currency),
+                                EUR_wage = lambda df: df['Wage'].pipe(convert_currency))
+            .drop(['Value', 'Wage'], axis=1))
 
 def get_overview_data(from_file=False, update_files=True):
     overview_htmls = get_overview_htmls(from_file, update_files)
