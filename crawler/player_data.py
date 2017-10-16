@@ -157,9 +157,7 @@ def parse_player_detailed_data(player_htmls, constants):
                  *constants['traits'],
                  *constants['specialities'],
                  *constants['position_preferences']]
-    df = (df
-          .assign(release_clause_EUR=df['Release clause'].pipe(convert_currency))
-          .drop('Release clause', axis=1))
+    df.loc[:, 'Release clause'] = df['Release clause'].pipe(convert_currency)
     numeric_cols_to_be_converted = ['ID', 'Height_cm', 'Weight_kg',
                                     *constants['headline_attributes'],
                                     'International reputation',
@@ -168,7 +166,7 @@ def parse_player_detailed_data(player_htmls, constants):
                                     *constants['positions']]
     for col in numeric_cols_to_be_converted:
         df.loc[:, col] = pd.to_numeric(df[col])
-    return df[col_order]
+    return df[col_order].rename(columns={'Release clause':'Release_clause_EUR'})
 
 
 def get_player_detailed_data(IDs, from_file=False):
