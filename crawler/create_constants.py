@@ -49,7 +49,7 @@ def get_all_constants():
     constants_dict = {'positions':positions,
                       'position_preferences':position_preferences,
                       'headline_attributes':headline_attribute_names,
-                      'main_attributes':main_attributes
+                      'main_attributes':main_attributes,
                       **traits_specialities_dict}
     return constants_dict
 
