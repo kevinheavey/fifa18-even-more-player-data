@@ -42,7 +42,7 @@ def parse_overview_data(overview_htmls):
     data = []
     for sub_list in data_lists:
         data.extend(sub_list)
-    return pd.DataFrame.from_dict(data)
+    return pd.DataFrame(data)
 
 def convert_currency(curr_col):
     without_euro_symbol = curr_col.str[1:]
