@@ -33,7 +33,7 @@ def get_headline_attribute_names():
 def get_all_constants():
     positions = ['RS', 'RW', 'RF', 'RAM', 'RCM', 'RM', 'RDM', 'RCB', 'RB',
                  'RWB', 'ST', 'LW', 'CF', 'CAM', 'CM', 'LM', 'CDM', 'CB',
-                 'LB', 'LWB', 'LS', 'LF', 'LAM', 'LCM', 'LDM', 'LCB']
+                 'LB', 'LWB', 'LS', 'LF', 'LAM', 'LCM', 'LDM', 'LCB', 'GK']
     main_attributes = ['Crossing','Finishing','Heading accuracy',
                        'Short passing','Volleys','Dribbling','Curve',
                        'Free kick accuracy','Long passing','Ball control',
@@ -46,10 +46,18 @@ def get_all_constants():
     position_preferences = ['prefers_' + pos for pos in positions]
     traits_specialities_dict = get_all_traits_and_specialities()
     headline_attribute_names = get_headline_attribute_names()
+    body_features = ['Height_cm', 'Weight_kg', 'Body type', 'Real face']
+    special_attributes = ['International reputation', 'Skill moves',
+                          'Weak foot', 'Work rate att', 'Work rate def',
+                          'Preferred foot']
+    uncategorised = ['ID', 'Birth date', 'Release clause']
     constants_dict = {'positions':positions,
                       'position_preferences':position_preferences,
                       'headline_attributes':headline_attribute_names,
                       'main_attributes':main_attributes,
+                      'body_features':body_features,
+                      'special_attributes':special_attributes,
+                      'uncategorised':uncategorised,
                       **traits_specialities_dict}
     return constants_dict
 
