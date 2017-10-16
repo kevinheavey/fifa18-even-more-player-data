@@ -8,19 +8,19 @@ def parse_single_row(overview_table_row):
 
     record_dict = {}
     tds = overview_table_row.find_all('td', recursive=False)
-    record_dict['photo'] = tds[0].find('img').get('data-src')
+    record_dict['Photo'] = tds[0].find('img').get('data-src')
     record_dict['ID'] = tds[0].find('img').get('id')
-    record_dict['nationality'] = tds[1].find('a').get('title')
-    record_dict['flag'] = tds[1].find('img').get('data-src')
-    record_dict['name'] = tds[1].find_all('a')[1].text
-    record_dict['age'] = tds[2].find('div').text.strip()
-    record_dict['overall'] = tds[3].text.strip()
-    record_dict['potential'] = tds[4].text.strip()
-    record_dict['club'] = tds[5].find('a').text
-    record_dict['club_logo'] = tds[5].find('img').get('data-src')
-    record_dict['value'] = tds[7].text
-    record_dict['wage'] = tds[8].text
-    record_dict['special'] = tds[17].text
+    record_dict['Nationality'] = tds[1].find('a').get('title')
+    record_dict['Flag'] = tds[1].find('img').get('data-src')
+    record_dict['Name'] = tds[1].find_all('a')[1].text
+    record_dict['Age'] = tds[2].find('div').text.strip()
+    record_dict['Overall'] = tds[3].text.strip()
+    record_dict['Potential'] = tds[4].text.strip()
+    record_dict['Club'] = tds[5].find('a').text
+    record_dict['Club_logo'] = tds[5].find('img').get('data-src')
+    record_dict['Value'] = tds[7].text
+    record_dict['Wage'] = tds[8].text
+    record_dict['Special'] = tds[17].text
 
     return record_dict
 
@@ -57,6 +57,6 @@ def clean_overview_data(df):
                                 EUR_wage = lambda df: df['wage'].pipe(convert_currency))
             .drop(['value', 'wage'], axis=1))
 
-def get_overview_data(from_file=False):
-    overview_htmls = get_overview_htmls(from_file)
+def get_overview_data(from_file=False, update_files=True):
+    overview_htmls = get_overview_htmls(from_file, update_files)
     return parse_overview_data(overview_htmls).pipe(clean_overview_data)
