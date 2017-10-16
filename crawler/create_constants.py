@@ -28,13 +28,16 @@ def get_headline_attribute_names():
     soup = BeautifulSoup(html, 'lxml', parse_only=strainer)
     return list(parse_headline_attributes(soup).keys())
 
+
 def get_all_constants():
     positions = ['RS', 'RW', 'RF', 'RAM', 'RCM', 'RM', 'RDM', 'RCB', 'RB',
                  'RWB', 'ST', 'LW', 'CF', 'CAM', 'CM', 'LM', 'CDM', 'CB',
                  'LB', 'LWB', 'LS', 'LF', 'LAM', 'LCM', 'LDM', 'LCB']
+    position_preferences = ['is_' + pos for pos in positions]
     traits_specialities_dict = get_all_traits_and_specialities()
     headline_attribute_names = get_headline_attribute_names()
     constants_dict = {'positions':positions,
+                      'position_preferences':position_preferences,
                       'headline_attributes':headline_attribute_names,
                       **traits_specialities_dict}
     return constants_dict
