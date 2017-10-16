@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup, SoupStrainer
 import pandas as pd
+from multiprocessing import Pool, cpu_count
 
 def parse_single_row(overview_table_row):
 
@@ -31,9 +32,12 @@ def parse_single_overview_page(html, strainer):
 
 
 def parse_overview_data(overview_htmls):
+    pool = Pool(cpu_count())
     strainer = SoupStrainer('tbody')
+    htmls = list(overview_htmls.values())
+    func_args = [(h, strainer) for h in htmls]
+    data_lists = pool.starmap(parse_single_overview_page, func_args)
     data = []
-    for html in overview_htmls.values():
-        row_dicts = parse_single_overview_page(html, strainer)
-        data.extend(row_dicts)
+    for sub_list in data_lists:
+        data.extend(sub_list)
     return pd.DataFrame.from_dict(data)
