@@ -79,7 +79,10 @@ def get_player_urls(IDs):
     return urls
 
 def get_player_htmls(IDs, from_file=False, update_files=False):
-    urls = get_player_urls(IDs)
+    if from_file:
+        urls = None
+    else:
+        urls = get_player_urls(IDs)
     player_htmls = _get_htmls(urls, from_file, file_key='player')
     if update_files and not from_file:
         update_pickled_player_htmls(player_htmls)
