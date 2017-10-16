@@ -149,7 +149,7 @@ def parse_player_detailed_data(player_htmls, constants):
         data.append(row_dict)
     df = pd.DataFrame(data)
     col_order = [*constants['uncategorised'],
-                 *constants['body_features']
+                 *constants['body_features'],
                  *constants['headline_attributes'],
                  *constants['special_attributes'],
                  *constants['main_attributes'],
