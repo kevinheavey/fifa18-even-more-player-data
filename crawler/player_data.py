@@ -3,6 +3,7 @@ import numpy as np
 from bs4 import BeautifulSoup, SoupStrainer
 from .utils import parse_headline_attributes, read_constants, convert_currency
 from .html_download import get_player_htmls
+from multiprocessing import Pool, cpu_count
 
 def _get_main_soup(soup):
     return soup.find_all('section', recursive=False)[2]
@@ -114,7 +115,9 @@ def get_full_position_preferences(preferred_positions_list, all_positions):
     return {'prefers_' + pos: (pos in preferred_positions_list) for pos in all_positions}
 
 
-def parse_single_player_page(html, strainer, constants):
+def parse_single_player_page(url, html, strainer, constants):
+
+    player_id = id_from_url(url)
     soup = BeautifulSoup(html, 'lxml', parse_only=strainer)
     all_traits = constants['traits']
     all_specialities = constants['specialities']
@@ -131,7 +134,7 @@ def parse_single_player_page(html, strainer, constants):
     miscellaneous_data = parse_player_miscellaneous_data(main_article)
     position_ratings = get_position_ratings(main_soup, main_article, all_positions)
     position_preferences = get_full_position_preferences(_preferred_positions, all_positions)
-    return {**main_attributes, **headline_attributes, **metadata,
+    return {'ID':player_id, **main_attributes, **headline_attributes, **metadata,
             **traits_and_specialities, **miscellaneous_data, **position_ratings,
             **position_preferences}
 
@@ -141,12 +144,14 @@ def id_from_url(url):
 
 
 def parse_player_detailed_data(player_htmls, constants):
+    pool = Pool(cpu_count())
     strainer = SoupStrainer(['section', 'script'])
-    data = []
-    for player_id, html in player_htmls.items():
-        row_dict = parse_single_player_page(html, strainer, constants)
-        row_dict['ID'] = id_from_url(player_id)
-        data.append(row_dict)
+    # data = []
+    # for url, html in player_htmls.items():
+    #     row_dict = parse_single_player_page(url, html, strainer, constants)
+    #     data.append(row_dict)
+    func_args = [(url, html, strainer, constants) for url, html in player_htmls.items()]
+    data = pool.starmap(parse_single_player_page, func_args)
     df = pd.DataFrame(data)
     col_order = [*constants['uncategorised'],
                  *constants['body_features'],
