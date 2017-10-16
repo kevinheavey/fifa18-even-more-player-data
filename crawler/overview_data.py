@@ -57,6 +57,10 @@ def clean_overview_data(df):
 def get_overview_data(from_file=False, update_files=True):
     overview_htmls = get_overview_htmls(from_file, update_files)
     df = parse_overview_data(overview_htmls).pipe(clean_overview_data)
+    numeric_cols_to_be_converted = ['ID', 'Overall', 'Potential',
+                                    'Special', 'Age']
+    for col in numeric_cols_to_be_converted:
+        df.loc[:, col] = pd.to_numeric(df[col])
     return df[['ID', 'Name', 'Club', 'Club logo', 'Flag', 'Photo',
                'EUR_value', 'EUR_wage', 'Overall', 'Potential',
                'Special', 'Age']]
