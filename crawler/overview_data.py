@@ -41,3 +41,16 @@ def parse_overview_data(overview_htmls):
     for sub_list in data_lists:
         data.extend(sub_list)
     return pd.DataFrame.from_dict(data)
+
+def convert_currency(curr_col):
+    without_euro_symbol = curr_col.str[1:]
+    unit_symbol = without_euro_symbol.str[-1]
+    numeric_part = np.where(unit_symbol == '0', 0, without_euro_symbol.str[:-1].pipe(pd.to_numeric))
+    multipliers = unit_symbol.replace({'M':1e6, 'K':1e3}).pipe(pd.to_numeric)
+    return numeric_part * multipliers
+
+def clean_overview_data(df):
+    return (df.drop_duplicates('ID')
+            .assign(EUR_value = lambda df: df['value'].pipe(convert_currency),
+                                EUR_wage = lambda df: df['wage'].pipe(convert_currency))
+            .drop(['value', 'wage'], axis=1))
