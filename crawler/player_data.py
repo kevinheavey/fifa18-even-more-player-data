@@ -147,7 +147,17 @@ def parse_player_detailed_data(player_htmls, constants):
         row_dict = parse_single_player_page(html, strainer, constants)
         row_dict['ID'] = id_from_url(player_id)
         data.append(row_dict)
-    return pd.DataFrame(data)
+    df = pd.DataFrame(data)
+    col_order = [*constants['uncategorised'],
+                 *constants['body_features']
+                 *constants['headline_attributes'],
+                 *constants['special_attributes'],
+                 *constants['main_attributes'],
+                 *constants['positions'],
+                 *constants['traits'],
+                 *constants['specialities'],
+                 *constants['position_preferences']]
+    return df[col_order]
 
 
 def get_player_detailed_data(IDs, from_file=False):
