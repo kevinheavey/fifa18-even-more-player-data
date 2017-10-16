@@ -160,7 +160,7 @@ def parse_player_detailed_data(player_htmls, constants):
     df = (df
           .assign(release_clause_EUR=df['Release clause'].pipe(convert_currency))
           .drop('Release clause', axis=1))
-    numeric_cols_to_be_converted = ['ID', 'Height_cm', 'Weight_kg'
+    numeric_cols_to_be_converted = ['ID', 'Height_cm', 'Weight_kg',
                                     *constants['headline_attributes'],
                                     'International reputation',
                                     'Skill moves',
