@@ -47,8 +47,8 @@ def parse_player_metadata(main_article):
 
 
 def _get_traits_and_specialities_dict(player_traits, player_specialities, all_traits, all_specialities):
-    trait_dict = {trait: (trait in player_traits) for trait in all_traits}
-    speciality_dict = {speciality: (speciality in player_specialities) for speciality in all_specialities}
+    trait_dict = {trait + '_trait': (trait in player_traits) for trait in all_traits}
+    speciality_dict = {speciality + '_speciality': (speciality in player_specialities) for speciality in all_specialities}
     return {**trait_dict, **speciality_dict}
 
 
