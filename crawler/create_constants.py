@@ -19,7 +19,10 @@ def get_all_traits_and_specialities():
     traits1 = list(soup.find(attrs={'name': 't1[]'}).stripped_strings)
     traits2 = list(soup.find(attrs={'name': 't2[]'}).stripped_strings)
     all_traits = list(np.unique([*traits1, *traits2])) # some traits are duplicated unfortunately
+    all_traits = [t + '_trait' for t in all_traits]
     all_specialities = list(soup.find(attrs={'name': 'sc[]'}).stripped_strings)
+    # avoid duplicating the strength speciality name with the strength attribute
+    all_specialities = [s + '_speciality' for s in all_specialities]
     return {'traits': all_traits, 'specialities': all_specialities}
 
 def get_headline_attribute_names():
