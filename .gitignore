@@ -6,7 +6,7 @@ player_data.csv
 PlayerAttributeData.csv
 overview_htmls.pkl
 crawler/__pycache__
-data/pickled_html
+data/html_jsons
 
 # User-specific stuff:
 .idea/**/workspace.xml

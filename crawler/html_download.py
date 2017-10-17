@@ -1,14 +1,14 @@
 import aiohttp
 import asyncio
 from pathlib import Path
-import pickle
+import json
 import shutil
 
-_PICKLE_DIR = Path(__file__).parents[1] / 'data/pickled_html'
-_PICKLE_SUBDIRS = {'overview': _PICKLE_DIR / 'overview',
-                  'player': _PICKLE_DIR / 'player'}
-_PICKLE_FILEPATHS = {'overview': _PICKLE_SUBDIRS['overview'] / 'current.pkl',
-                    'player': _PICKLE_SUBDIRS['player'] / 'current.pkl'}
+_JSON_DIR = Path(__file__).parents[1] / 'data/html_jsons'
+_JSON_SUBDIRS = {'overview': _JSON_DIR / 'overview',
+                  'player': _JSON_DIR / 'player'}
+_JSON_FILEPATHS = {'overview': _JSON_SUBDIRS['overview'] / 'current.json',
+                    'player': _JSON_SUBDIRS['player'] / 'current.json'}
 
 async def _fetch(session, url):
     async with session.get(url, timeout=60*60) as response:
@@ -24,15 +24,15 @@ async def _fetch_all(session, urls, loop):
     return results
 
 
-def _get_htmls_from_pickle(file_key):
-    with open(_PICKLE_FILEPATHS[file_key], 'rb') as f:
-        htmls = pickle.load(f)
+def _get_htmls_from_json(file_key):
+    with open(_JSON_FILEPATHS[file_key], 'r') as f:
+        htmls = json.load(f)
     return htmls
 
 
 def _get_htmls(urls, from_file=False, file_key=None):
     if from_file:
-        return _get_htmls_from_pickle(file_key)
+        return _get_htmls_from_json(file_key)
     else:
         loop = asyncio.get_event_loop()
         connector = aiohttp.TCPConnector(limit=100)
@@ -40,25 +40,25 @@ def _get_htmls(urls, from_file=False, file_key=None):
             htmls = loop.run_until_complete(_fetch_all(session, urls, loop))
     return dict(zip(urls, htmls))
 
-def save_htmls_to_pickle(htmls, file_key):
-    with open(_PICKLE_FILEPATHS[file_key], 'wb') as f:
-        pickle.dump(htmls, f)
+def save_htmls_to_json(htmls, file_key):
+    with open(_JSON_FILEPATHS[file_key], 'w') as f:
+        json.dump(htmls, f)
 
-def update_pickled_htmls(new_htmls, file_key):
+def update_htmls_json(new_htmls, file_key):
     try:
-        shutil.move(_PICKLE_FILEPATHS[file_key],
-                    _PICKLE_SUBDIRS[file_key] / 'previous.pkl')
+        shutil.move(_JSON_FILEPATHS[file_key],
+                    _JSON_SUBDIRS[file_key] / 'previous.json')
     except FileNotFoundError:
         pass
-    save_htmls_to_pickle(new_htmls, file_key)
+    save_htmls_to_json(new_htmls, file_key)
 
-def update_pickled_overview_htmls(overview_htmls):
+def update_overview_htmls_json(overview_htmls):
     file_key = 'overview'
-    update_pickled_htmls(overview_htmls, file_key)
+    update_htmls_json(overview_htmls, file_key)
 
-def update_pickled_player_htmls(player_htmls):
+def update_player_htmls_json(player_htmls):
     file_key = 'player'
-    update_pickled_htmls(player_htmls, file_key)
+    update_htmls_json(player_htmls, file_key)
 
 def get_overview_urls():
 
@@ -85,12 +85,12 @@ def get_player_htmls(IDs, from_file=False, update_files=False):
         urls = get_player_urls(IDs)
     player_htmls = _get_htmls(urls, from_file, file_key='player')
     if update_files and not from_file:
-        update_pickled_player_htmls(player_htmls)
+        update_player_htmls_json(player_htmls)
     return player_htmls
 
 def get_overview_htmls(from_file=False, update_files=False):
     urls = get_overview_urls()
     overview_htmls = _get_htmls(urls, from_file, file_key='overview')
     if update_files and not from_file:
-        update_pickled_overview_htmls(overview_htmls)
+        update_overview_htmls_json(overview_htmls)
     return overview_htmls
