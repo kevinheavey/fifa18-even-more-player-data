@@ -142,6 +142,36 @@ def parse_single_player_page(url, html, strainer, constants):
 def id_from_url(url):
     return url.split('/')[-1]
 
+def _feet_to_cm(str_series):
+    inches_to_cm_factor = 2.54
+    feet_inches_df = (str_series.str.strip('"')
+                      .str.split("'", expand=True)
+                      .rename(columns={0:'feet', 1:'inches'})
+                      .astype('int'))
+    total_inches_series = feet_inches_df['feet']*12 + feet_inches_df['inches']
+    return (total_inches_series * 2.54).round().astype('int').rename('Height_cm')
+
+def _convert_height_col(height_series):
+    feet_index = height_series.str.contains('"')
+    feet_series = height_series[feet_index]
+    return (height_series
+            .mask(feet_index, other=_feet_to_cm(feet_series))
+            .pipe(pd.to_numeric, errors='ignore'))
+
+def _lb_to_kg(str_series):
+    lb_to_kg_factor = 0.453592
+    return (str_series.str.strip('lbs')
+            .astype('int')
+            .mul(lb_to_kg_factor)
+            .round().astype('int'))
+
+def _convert_weight_col(weight_series):
+    lb_index = weight_series.str.contains('lbs')
+    lb_series = weight_series[lb_index]
+    return (weight_series
+            .mask(lb_index, other=_lb_to_kg(lb_series))
+            .pipe(pd.to_numeric, errors='ignore'))
+
 
 def parse_player_detailed_data(player_htmls, constants):
     pool = Pool(cpu_count())
@@ -165,7 +195,7 @@ def parse_player_detailed_data(player_htmls, constants):
     df.loc[:, 'Release clause'] = df['Release clause'].pipe(convert_currency)
     df.loc[:, 'Birth date'] = pd.to_datetime(df['Birth date'], format='%b %d %Y')
     df.loc[:, 'Real face'] = np.where(df['Real face']=='Yes', True, False)
-    numeric_cols_to_be_converted = ['ID', 'Height_cm', 'Weight_kg',
+    numeric_cols_to_be_converted = ['ID',
                                     *constants['headline_attributes'],
                                     *constants['main_attributes'],
                                     'International reputation',
@@ -173,7 +203,7 @@ def parse_player_detailed_data(player_htmls, constants):
                                     'Weak foot',
                                     *constants['positions']]
     for col in numeric_cols_to_be_converted:
-        df.loc[:, col] = pd.to_numeric(df[col])
+        df.loc[:, col] = pd.to_numeric(df[col], errors='ignore') #deal with errors later
     return df[col_order].rename(columns={'Release clause':'Release_clause_EUR'})
 
 
