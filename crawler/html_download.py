@@ -11,9 +11,8 @@ _PICKLE_FILEPATHS = {'overview': _PICKLE_SUBDIRS['overview'] / 'current.pkl',
                     'player': _PICKLE_SUBDIRS['player'] / 'current.pkl'}
 
 async def _fetch(session, url):
-    with aiohttp.Timeout(3000):
-        async with session.get(url) as response:
-            return await response.text()
+    async with session.get(url, timeout=3000) as response:
+        return await response.text()
 
 
 async def _fetch_all(session, urls, loop):
