@@ -195,6 +195,8 @@ def parse_player_detailed_data(player_htmls, constants):
     df.loc[:, 'Release clause'] = df['Release clause'].pipe(convert_currency)
     df.loc[:, 'Birth date'] = pd.to_datetime(df['Birth date'], format='%b %d %Y')
     df.loc[:, 'Real face'] = np.where(df['Real face']=='Yes', True, False)
+    df.loc[:, 'Height_cm'] = _convert_height_col(df['Height_cm'])
+    df.loc[:, 'Weight_kg'] = _convert_weight_col(df['Weight_kg'])
     numeric_cols_to_be_converted = ['ID',
                                     *constants['headline_attributes'],
                                     *constants['main_attributes'],
