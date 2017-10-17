@@ -3,7 +3,8 @@ import json
 from bs4 import BeautifulSoup, SoupStrainer
 from pathlib import Path
 import shutil
-from utils import parse_headline_attributes
+from crawler.utils import parse_headline_attributes
+import numpy as np
 
 CONSTANTS_DIR = Path(__file__).parents[1] / 'data/resources/constants/'
 CURRENT_PATH = CONSTANTS_DIR / 'current.json'
@@ -17,7 +18,7 @@ def get_all_traits_and_specialities():
     soup = BeautifulSoup(html, 'lxml', parse_only=strainer)
     traits1 = list(soup.find(attrs={'name': 't1[]'}).stripped_strings)
     traits2 = list(soup.find(attrs={'name': 't2[]'}).stripped_strings)
-    all_traits = [*traits1, *traits2]
+    all_traits = list(np.unique([*traits1, *traits2])) # some traits are duplicated unfortunately
     all_specialities = list(soup.find(attrs={'name': 'sc[]'}).stripped_strings)
     return {'traits': all_traits, 'specialities': all_specialities}
 
