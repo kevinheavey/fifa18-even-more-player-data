@@ -47,8 +47,10 @@ def parse_player_metadata(main_article):
 
 
 def _get_traits_and_specialities_dict(player_traits, player_specialities, all_traits, all_specialities):
-    trait_dict = {trait + '_trait': (trait in player_traits) for trait in all_traits}
-    speciality_dict = {speciality + '_speciality': (speciality in player_specialities) for speciality in all_specialities}
+    player_traits = [str(trait) + '_trait' for trait in player_traits]
+    player_specialities = [str(spec) + '_speciality' for spec in player_specialities]
+    trait_dict = {trait: (trait in player_traits) for trait in all_traits}
+    speciality_dict = {speciality: (speciality in player_specialities) for speciality in all_specialities}
     return {**trait_dict, **speciality_dict}
 
 
@@ -153,10 +155,13 @@ def _feet_to_cm(str_series):
 
 def _convert_height_col(height_series):
     feet_index = height_series.str.contains('"')
-    feet_series = height_series[feet_index]
-    return (height_series
-            .mask(feet_index, other=_feet_to_cm(feet_series))
-            .pipe(pd.to_numeric, errors='ignore'))
+    if feet_index.any():
+        feet_series = height_series[feet_index]
+        return (height_series
+                .mask(feet_index, other=_feet_to_cm(feet_series))
+                .pipe(pd.to_numeric, errors='ignore'))
+    else:
+        return height_series
 
 def _lb_to_kg(str_series):
     lb_to_kg_factor = 0.453592
@@ -167,10 +172,13 @@ def _lb_to_kg(str_series):
 
 def _convert_weight_col(weight_series):
     lb_index = weight_series.str.contains('lbs')
-    lb_series = weight_series[lb_index]
-    return (weight_series
-            .mask(lb_index, other=_lb_to_kg(lb_series))
-            .pipe(pd.to_numeric, errors='ignore'))
+    if lb_index.any():
+        lb_series = weight_series[lb_index]
+        return (weight_series
+                .mask(lb_index, other=_lb_to_kg(lb_series))
+                .pipe(pd.to_numeric, errors='ignore'))
+    else:
+        return weight_series
 
 
 def parse_player_detailed_data(player_htmls, constants):
