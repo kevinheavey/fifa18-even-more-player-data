@@ -11,7 +11,7 @@ _PICKLE_FILEPATHS = {'overview': _PICKLE_SUBDIRS['overview'] / 'current.pkl',
                     'player': _PICKLE_SUBDIRS['player'] / 'current.pkl'}
 
 async def _fetch(session, url):
-    async with session.get(url, timeout=3000) as response:
+    async with session.get(url, timeout=60*60) as response:
         return await response.text()
 
 
