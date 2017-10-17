@@ -44,7 +44,7 @@ def save_htmls_to_json(htmls, file_key):
     with open(_JSON_FILEPATHS[file_key], 'w') as f:
         json.dump(htmls, f)
 
-def update_htmls_json(new_htmls, file_key):
+def update_htmls_jsons(new_htmls, file_key):
     try:
         shutil.move(_JSON_FILEPATHS[file_key],
                     _JSON_SUBDIRS[file_key] / 'previous.json')
@@ -52,13 +52,13 @@ def update_htmls_json(new_htmls, file_key):
         pass
     save_htmls_to_json(new_htmls, file_key)
 
-def update_overview_htmls_json(overview_htmls):
+def update_overview_htmls_jsons(overview_htmls):
     file_key = 'overview'
-    update_htmls_json(overview_htmls, file_key)
+    update_htmls_jsons(overview_htmls, file_key)
 
-def update_player_htmls_json(player_htmls):
+def update_player_htmls_jsons(player_htmls):
     file_key = 'player'
-    update_htmls_json(player_htmls, file_key)
+    update_htmls_jsons(player_htmls, file_key)
 
 def get_overview_urls():
 
@@ -85,12 +85,12 @@ def get_player_htmls(IDs, from_file=False, update_files=False):
         urls = get_player_urls(IDs)
     player_htmls = _get_htmls(urls, from_file, file_key='player')
     if update_files and not from_file:
-        update_player_htmls_json(player_htmls)
+        update_player_htmls_jsons(player_htmls)
     return player_htmls
 
 def get_overview_htmls(from_file=False, update_files=False):
     urls = get_overview_urls()
     overview_htmls = _get_htmls(urls, from_file, file_key='overview')
     if update_files and not from_file:
-        update_overview_htmls_json(overview_htmls)
+        update_overview_htmls_jsons(overview_htmls)
     return overview_htmls
