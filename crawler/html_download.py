@@ -35,7 +35,8 @@ def _get_htmls(urls, from_file=False, file_key=None):
         return _get_htmls_from_pickle(file_key)
     else:
         loop = asyncio.get_event_loop()
-        with aiohttp.ClientSession(loop=loop) as session:
+        connector = aiohttp.TCPConnector(limit=100)
+        with aiohttp.ClientSession(loop=loop, connector=connector) as session:
             htmls = loop.run_until_complete(_fetch_all(session, urls, loop))
     return dict(zip(urls, htmls))
 
