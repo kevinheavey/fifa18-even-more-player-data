@@ -1,12 +1,7 @@
-Allplayer.csv
-data.csv
-full_player_data.csv
-FullDataset.csv
-player_data.csv
 PlayerAttributeData.csv
-overview_htmls.pkl
 crawler/__pycache__
 data/html_jsons
+crawler.ipynb
 
 # User-specific stuff:
 .idea/**/workspace.xml
