@@ -63,4 +63,4 @@ def get_overview_data(from_file=False, update_files=True):
         df.loc[:, col] = pd.to_numeric(df[col])
     return df[['ID', 'Name', 'Club', 'Club logo', 'Flag', 'Photo',
                'EUR_value', 'EUR_wage', 'Overall', 'Potential',
-               'Special', 'Age']]
+               'Special', 'Age']].reset_index()
