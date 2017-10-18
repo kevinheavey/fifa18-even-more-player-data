@@ -4,6 +4,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+DATA_DIR = Path(__file__).parents[1] / 'data'
+VERSION_KEYS = ['current', 'previous']
+CATEGORY_KEYS = ['overview', 'player']
 
 def headline_attribute_from_line(line):
     equals_sign_loc = line.find('=')
@@ -21,7 +24,7 @@ def parse_headline_attributes(soup):
     return attribute_dict
 
 def read_constants():
-    path = Path(__file__).parents[1] / 'data/resources/constants/current.json'
+    path = Path(__file__).parents[1] / 'data/resources/constants/overview.json'
     with open(path, 'r') as f:
         constants = json.load(f)
     return constants
@@ -33,3 +36,13 @@ def convert_currency(curr_col):
     numeric_part = np.where(unit_symbol == '0', 0, without_euro_symbol.str[:-1].pipe(pd.to_numeric))
     multipliers = unit_symbol.replace({'M':1e6, 'K':1e3}).pipe(pd.to_numeric)
     return numeric_part * multipliers
+
+def filepath_tree(data_subdir_name, extension):
+    sub_dir = DATA_DIR / data_subdir_name
+    version_dirs = {key: sub_dir / key for key in VERSION_KEYS}
+    filepaths = {ver_key:
+                           {cat_key:
+                                (version_dirs[ver_key] / cat_key).with_suffix(extension)
+                            for cat_key in CATEGORY_KEYS}
+                       for ver_key in VERSION_KEYS}
+    return filepaths
