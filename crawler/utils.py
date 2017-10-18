@@ -6,7 +6,7 @@ import pandas as pd
 
 DATA_DIR = Path(__file__).parents[1] / 'data'
 VERSION_KEYS = ['current', 'previous']
-CATEGORY_KEYS = ['overview', 'player' 'complete']
+CATEGORY_KEYS = ['overview', 'player', 'complete']
 
 def headline_attribute_from_line(line):
     equals_sign_loc = line.find('=')
