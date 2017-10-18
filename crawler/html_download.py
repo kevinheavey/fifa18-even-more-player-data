@@ -1,14 +1,10 @@
 import aiohttp
 import asyncio
-from pathlib import Path
 import json
 import shutil
+import crawler.utils
 
-_JSON_DIR = Path(__file__).parents[1] / 'data/html_jsons'
-_JSON_SUBDIRS = {'overview': _JSON_DIR / 'overview',
-                  'player': _JSON_DIR / 'player'}
-_JSON_FILEPATHS = {'overview': _JSON_SUBDIRS['overview'] / 'current.json',
-                    'player': _JSON_SUBDIRS['player'] / 'current.json'}
+_JSON_FILEPATHS = crawler.utils.filepath_tree('html_jsons', '.json')
 
 async def _fetch(session, url):
     async with session.get(url, timeout=60*60) as response:
@@ -24,8 +20,8 @@ async def _fetch_all(session, urls, loop):
     return results
 
 
-def _get_htmls_from_json(file_key):
-    with open(_JSON_FILEPATHS[file_key], 'r') as f:
+def _get_htmls_from_json(category_key):
+    with open(_JSON_FILEPATHS['current'][category_key], 'r') as f:
         htmls = json.load(f)
     return htmls
 
@@ -44,13 +40,13 @@ def save_htmls_to_json(htmls, file_key):
     with open(_JSON_FILEPATHS[file_key], 'w') as f:
         json.dump(htmls, f)
 
-def update_htmls_jsons(new_htmls, file_key):
+def update_htmls_jsons(new_htmls, category_key):
     try:
-        shutil.move(_JSON_FILEPATHS[file_key],
-                    _JSON_SUBDIRS[file_key] / 'previous.json')
+        shutil.move(_JSON_FILEPATHS['current'][category_key],
+                    _JSON_FILEPATHS['previous'][category_key])
     except FileNotFoundError:
         pass
-    save_htmls_to_json(new_htmls, file_key)
+    save_htmls_to_json(new_htmls, category_key)
 
 def update_overview_htmls_jsons(overview_htmls):
     file_key = 'overview'
