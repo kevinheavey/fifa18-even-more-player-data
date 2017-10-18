@@ -1,6 +1,6 @@
 from crawler.overview_data import get_overview_data
 from crawler.player_data import get_player_detailed_data
-from pathlib import Path
+import shutil
 import crawler.utils
 
 _FEATHER_FILEPATHS = crawler.utils.filepath_tree('final', '.feather')
@@ -13,6 +13,15 @@ def save_data(data, category_key):
     data.to_feather(feather_path)
     csv_path = str(_CSV_FILEPATHS[version_key][category_key])
     data.to_csv(csv_path, index=False)
+
+def update_data(data, category_key):
+    csv_path_current = _CSV_FILEPATHS['current'][category_key]
+    csv_path_previous = _CSV_FILEPATHS['previous'][category_key]
+    feather_path_current = _FEATHER_FILEPATHS['current'][category_key]
+    feather_path_previous = _FEATHER_FILEPATHS['previous'][category_key]
+    shutil.move(csv_path_current, csv_path_previous)
+    shutil.move(feather_path_current, feather_path_previous)
+    save_data(data, category_key)
 
 def main(from_file=False, update_files=True):
 
