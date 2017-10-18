@@ -4,8 +4,10 @@ from pathlib import Path
 FINAL_DATA_DIR = Path(__file__).parents[1] / 'data/final'
 
 def save_data(data, name):
-    data.to_feather(FINAL_DATA_DIR / name +'.feather')
-    data.to_csv(FINAL_DATA_DIR / name + '.csv', index=False)
+    feather_path = str((FINAL_DATA_DIR / name).with_suffix('.feather'))
+    data.to_feather(feather_path)
+    csv_path = str((FINAL_DATA_DIR / name).with_suffix('.csv'))
+    data.to_csv(csv_path, index=False)
 
 def main(from_file=False, update_files=True):
 
