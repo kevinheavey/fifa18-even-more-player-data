@@ -36,9 +36,11 @@ def _get_htmls(urls, from_file=False, file_key=None):
             htmls = loop.run_until_complete(_fetch_all(session, urls, loop))
     return dict(zip(urls, htmls))
 
+
 def save_htmls_to_json(htmls, file_key):
     with open(_JSON_FILEPATHS[file_key], 'w') as f:
         json.dump(htmls, f)
+
 
 def update_htmls_jsons(new_htmls, category_key):
     try:
@@ -48,13 +50,16 @@ def update_htmls_jsons(new_htmls, category_key):
         pass
     save_htmls_to_json(new_htmls, category_key)
 
+
 def update_overview_htmls_jsons(overview_htmls):
     file_key = 'overview'
     update_htmls_jsons(overview_htmls, file_key)
 
+
 def update_player_htmls_jsons(player_htmls):
     file_key = 'player'
     update_htmls_jsons(player_htmls, file_key)
+
 
 def get_overview_urls():
 
@@ -66,6 +71,7 @@ def get_overview_urls():
         urls.append(url)
     return urls
 
+
 def get_player_urls(IDs):
     urls = []
     base_url = 'https://sofifa.com/player/'
@@ -73,6 +79,7 @@ def get_player_urls(IDs):
         url = base_url + str(ID)
         urls.append(url)
     return urls
+
 
 def get_player_htmls(IDs, from_file=False, update_files=False):
     if from_file:
@@ -83,6 +90,7 @@ def get_player_htmls(IDs, from_file=False, update_files=False):
     if update_files and not from_file:
         update_player_htmls_jsons(player_htmls)
     return player_htmls
+
 
 def get_overview_htmls(from_file=False, update_files=False):
     urls = get_overview_urls()
