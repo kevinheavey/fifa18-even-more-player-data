@@ -8,6 +8,10 @@ DATA_DIR = Path(__file__).parents[1] / 'data'
 VERSION_KEYS = ['current', 'previous']
 CATEGORY_KEYS = ['overview', 'player', 'complete']
 
+CONSTANTS_DIR = Path(__file__).parents[1] / 'data/resources/constants/'
+CURRENT_PATH = CONSTANTS_DIR / 'current.json'
+PREVIOUS_PATH = CONSTANTS_DIR / 'previous.json'
+
 def headline_attribute_from_line(line):
     equals_sign_loc = line.find('=')
     attribute_name = line[equals_sign_loc - 4: equals_sign_loc - 1]
@@ -24,8 +28,7 @@ def parse_headline_attributes(soup):
     return attribute_dict
 
 def read_constants():
-    path = Path(__file__).parents[1] / 'data/resources/constants/overview.json'
-    with open(path, 'r') as f:
+    with open(CURRENT_PATH, 'r') as f:
         constants = json.load(f)
     return constants
 

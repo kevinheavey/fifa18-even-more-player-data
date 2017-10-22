@@ -1,14 +1,11 @@
-import requests
 import json
-from bs4 import BeautifulSoup, SoupStrainer
-from pathlib import Path
 import shutil
-from crawler.utils import parse_headline_attributes
-import numpy as np
 
-CONSTANTS_DIR = Path(__file__).parents[1] / 'data/resources/constants/'
-CURRENT_PATH = CONSTANTS_DIR / 'current.json'
-PREVIOUS_PATH = CONSTANTS_DIR / 'previous.json'
+import numpy as np
+import requests
+from bs4 import BeautifulSoup, SoupStrainer
+
+from crawler.utils import parse_headline_attributes, CURRENT_PATH, PREVIOUS_PATH
 
 
 def get_all_traits_and_specialities():
