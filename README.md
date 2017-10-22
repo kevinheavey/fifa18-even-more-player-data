@@ -1,7 +1,6 @@
 # A more complete FIFA 18 player dataset
 
-#### Forked from [here](https://github.com/amanthedorkknight/fifa18-all-player-statistics), but this project no longer
-#### bears much resemblance to the original.
+#### Forked from [here](https://github.com/amanthedorkknight/fifa18-all-player-statistics), but this project no longer bears much resemblance to the original.
 
 This repo contains both the dataset and the code used to scrape so-fifa.com.
 
