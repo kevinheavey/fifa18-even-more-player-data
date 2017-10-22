@@ -151,7 +151,7 @@ def _feet_to_cm(str_series):
                       .rename(columns={0:'feet', 1:'inches'})
                       .astype('int'))
     total_inches_series = feet_inches_df['feet']*12 + feet_inches_df['inches']
-    return (total_inches_series * 2.54).round().astype('int').rename('Height_cm')
+    return (total_inches_series * inches_to_cm_factor).round().astype('int').rename('Height_cm')
 
 def _convert_height_col(height_series):
     feet_index = height_series.str.contains('"')
