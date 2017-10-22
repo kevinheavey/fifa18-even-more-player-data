@@ -93,6 +93,7 @@ def parse_player_miscellaneous_data(main_article):
 
 
 def get_position_ratings(main_soup, main_article, all_positions):
+    all_outfield_positions = [pos for pos in all_positions if pos != 'GK']
     position_col_name = 'Position'
     ratings_div = main_soup.aside.find('div', class_='toast mb-20', recursive=False)
     if ratings_div.h5.text == 'Real overall rating':
@@ -109,7 +110,7 @@ def get_position_ratings(main_soup, main_article, all_positions):
         position_ratings_dict.update({'GK': np.nan})
     else:
         gk_rating = main_article.div.find('div', class_='stats', recursive=False).td.span.text
-        position_ratings_dict = {'GK': gk_rating, **{pos: np.nan for pos in all_positions}}
+        position_ratings_dict = {'GK': gk_rating, **{pos: np.nan for pos in all_outfield_positions}}
     return position_ratings_dict
 
 
