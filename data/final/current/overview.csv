@@ -1,4 +1,4 @@
-ID,Name,Club,Club logo,Flag,Photo,EUR_value,EUR_wage,Overall,Potential,Special,Age
+ID,name,club,club_logo,flag,photo,eur_value,eur_wage,overall,potential,special,age
 20801,Cristiano Ronaldo,Real Madrid CF,https://cdn.sofifa.org/24/18/teams/243.png,https://cdn.sofifa.org/flags/38.png,https://cdn.sofifa.org/48/18/players/20801.png,95500000.0,565000.0,94,94,2228,32
 158023,L. Messi,FC Barcelona,https://cdn.sofifa.org/24/18/teams/241.png,https://cdn.sofifa.org/flags/52.png,https://cdn.sofifa.org/48/18/players/158023.png,105000000.0,565000.0,93,93,2158,30
 190871,Neymar,Paris Saint-Germain,https://cdn.sofifa.org/24/18/teams/73.png,https://cdn.sofifa.org/flags/54.png,https://cdn.sofifa.org/48/18/players/190871.png,123000000.0,280000.0,92,94,2100,25
