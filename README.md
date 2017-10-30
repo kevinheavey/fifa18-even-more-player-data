@@ -16,3 +16,5 @@ This repo contains both the dataset and the code used to scrape so-fifa.com.
 
 - There are still a few fields that could be added if anyone wants them, such as contract expiry date.
 - Scrapy might speed things up
+- Tests
+- Building an archive (EA updates its player data regularly and it would be useful to be able to make comparisons between old versions)
