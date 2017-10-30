@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 from bs4 import BeautifulSoup, SoupStrainer
-from .utils import parse_headline_attributes, read_constants, convert_currency
-from .html_download import get_player_htmls
+from crawler.utils import parse_headline_attributes, read_constants, convert_currency, standardise_col_names
+from crawler.html_download import get_player_htmls
 from multiprocessing import Pool, cpu_count
 
 def _get_main_soup(soup):
@@ -221,4 +221,4 @@ def parse_player_detailed_data(player_htmls, constants):
 def get_player_detailed_data(IDs, from_file=False):
     constants = read_constants()
     player_htmls = get_player_htmls(IDs, from_file)
-    return parse_player_detailed_data(player_htmls, constants)
+    return parse_player_detailed_data(player_htmls, constants).pipe(standardise_col_names)

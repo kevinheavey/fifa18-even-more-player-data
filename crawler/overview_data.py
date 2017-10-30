@@ -3,7 +3,7 @@ from multiprocessing import Pool, cpu_count
 import pandas as pd
 from bs4 import BeautifulSoup, SoupStrainer
 
-from crawler.utils import convert_currency
+from crawler.utils import convert_currency, standardise_col_names
 from .html_download import get_overview_htmls
 
 
@@ -61,6 +61,8 @@ def get_overview_data(from_file=False, update_files=True):
                                     'Special', 'Age']
     for col in numeric_cols_to_be_converted:
         df.loc[:, col] = pd.to_numeric(df[col])
-    return df[['ID', 'Name', 'Club', 'Club logo', 'Flag', 'Photo',
+    return (df[['ID', 'Name', 'Club', 'Club logo', 'Flag', 'Photo',
                'EUR_value', 'EUR_wage', 'Overall', 'Potential',
-               'Special', 'Age']].reset_index(drop=True)
+               'Special', 'Age']]
+            .reset_index(drop=True)
+            .pipe(standardise_col_names))
