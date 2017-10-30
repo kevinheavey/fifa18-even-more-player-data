@@ -3,7 +3,8 @@ crawler/__pycache__
 data/html_jsons/*
 crawler_checkpoint.ipynb
 .ipynb_checkpoints
-.ipynb
+*.ipynb
+*.xml
 
 # User-specific stuff:
 .idea/**/workspace.xml
