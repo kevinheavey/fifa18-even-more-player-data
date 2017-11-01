@@ -24,6 +24,7 @@ def update_data(data, category_key):
     save_data(data, category_key)
 
 def main(from_file=False, update_files=True):
+    """"""
 
     player_overview_data = get_overview_data(from_file=from_file,
                                              update_files=update_files)
