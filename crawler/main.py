@@ -23,11 +23,15 @@ def update_data(data, category_key):
     shutil.move(feather_path_current, feather_path_previous)
     save_data(data, category_key)
 
-def main(from_file=False, update_files=True):
-    """"""
+def main(from_file=False, update_html_store=True):
+    """Creates and exports the full dataset.
+    If from_file is set to False, then the crawler will be called to get all the html from scratch.
+    Then if update_html_store is set to True, the html .json files will be updated with the newly downloaded html.
+    Otherwise, the pre-existing .json files containing raw html will be used.
+    """
 
     player_overview_data = get_overview_data(from_file=from_file,
-                                             update_files=update_files)
+                                             update_files=update_html_store)
     save_data(player_overview_data, 'overview')
     IDs = player_overview_data['ID']
     player_detailed_data = get_player_detailed_data(IDs, from_file)
