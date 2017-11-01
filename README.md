@@ -8,9 +8,10 @@ This repo contains both the dataset and the code used to scrape so-fifa.com.
 
 1. I wanted more fields. This dataset contains extra fields such as International Reputation, traits and specialities.
 2. Efficiency:
-    - The original project all takes place in a Jupyter notebook. I've rebuilt it in .py files.
+    - The original project all takes place in a Jupyter notebook. I've rebuilt the crawler as a Python package.
     - The original project runs synchronously. I can only imagine that this takes several hours.
-3. Fun
+3. I've stored the data using the .feather format alongside .csv - this is more convenient for Python and R users
+4. Fun
 
 ## Future improvements:
 
