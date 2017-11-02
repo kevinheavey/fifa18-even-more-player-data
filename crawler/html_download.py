@@ -71,6 +71,13 @@ def get_overview_urls():
         urls.append(url)
     return urls
 
+def get_overview_htmls(from_file=False, update_files=False):
+    urls = get_overview_urls()
+    overview_htmls = _get_htmls(urls, from_file, file_key='overview')
+    if update_files and not from_file:
+        update_overview_htmls_jsons(overview_htmls)
+    return overview_htmls
+
 
 def get_player_urls(IDs):
     urls = []
@@ -92,9 +99,3 @@ def get_player_htmls(IDs, from_file=False, update_files=False):
     return player_htmls
 
 
-def get_overview_htmls(from_file=False, update_files=False):
-    urls = get_overview_urls()
-    overview_htmls = _get_htmls(urls, from_file, file_key='overview')
-    if update_files and not from_file:
-        update_overview_htmls_jsons(overview_htmls)
-    return overview_htmls
