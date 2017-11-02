@@ -218,7 +218,7 @@ def parse_player_detailed_data(player_htmls, constants):
     return df[col_order].rename(columns={'Release clause':'Release_clause_EUR'})
 
 
-def get_player_detailed_data(IDs, from_file=False):
+def get_player_detailed_data(IDs, from_file=False, update_html_store=False):
     constants = read_constants()
-    player_htmls = get_player_htmls(IDs, from_file)
+    player_htmls = get_player_htmls(IDs, from_file, update_html_store)
     return parse_player_detailed_data(player_htmls, constants).pipe(standardise_col_names)

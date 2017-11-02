@@ -6,7 +6,7 @@ import pandas as pd
 
 DATA_DIR = Path(__file__).parents[1] / 'data'
 VERSION_KEYS = ['current', 'previous']
-CATEGORY_KEYS = ['overview', 'player', 'complete', 'team_overview']
+CATEGORY_KEYS = ['overview', 'player', 'complete', 'league', 'league_overview']
 
 CONSTANTS_DIR = Path(__file__).parents[1] / 'data/resources/constants/'
 CURRENT_PATH = CONSTANTS_DIR / 'current.json'
