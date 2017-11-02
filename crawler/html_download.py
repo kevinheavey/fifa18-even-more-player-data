@@ -26,9 +26,9 @@ def _get_htmls_from_json(category_key):
     return htmls
 
 
-def _get_htmls(urls, from_file=False, file_key=None):
+def _get_htmls(urls, from_file=False, category_key=None):
     if from_file:
-        return _get_htmls_from_json(file_key)
+        return _get_htmls_from_json(category_key)
     else:
         loop = asyncio.get_event_loop()
         connector = aiohttp.TCPConnector(limit=100)
@@ -38,7 +38,7 @@ def _get_htmls(urls, from_file=False, file_key=None):
 
 
 def save_htmls_to_json(htmls, file_key):
-    with open(_JSON_FILEPATHS[file_key], 'w') as f:
+    with open(_JSON_FILEPATHS['current'][file_key], 'w') as f:
         json.dump(htmls, f)
 
 
@@ -60,6 +60,10 @@ def update_player_htmls_jsons(player_htmls):
     file_key = 'player'
     update_htmls_jsons(player_htmls, file_key)
 
+def update_team_overview_htmls_jsons(team_overview_htmls):
+    file_key = 'team_overview'
+    update_htmls_jsons(team_overview_htmls, file_key)
+
 
 def get_overview_urls():
 
@@ -73,7 +77,7 @@ def get_overview_urls():
 
 def get_overview_htmls(from_file=False, update_files=False):
     urls = get_overview_urls()
-    overview_htmls = _get_htmls(urls, from_file, file_key='overview')
+    overview_htmls = _get_htmls(urls, from_file, category_key='overview')
     if update_files and not from_file:
         update_overview_htmls_jsons(overview_htmls)
     return overview_htmls
@@ -93,9 +97,24 @@ def get_player_htmls(IDs, from_file=False, update_files=False):
         urls = None
     else:
         urls = get_player_urls(IDs)
-    player_htmls = _get_htmls(urls, from_file, file_key='player')
+    player_htmls = _get_htmls(urls, from_file, category_key='player')
     if update_files and not from_file:
         update_player_htmls_jsons(player_htmls)
     return player_htmls
 
+def get_team_overview_urls():
+    urls = []
+    base_url = 'https://sofifa.com/teams/?offset='
+    offset_increment = 80
+    for i in range(8):
+        url = base_url + str(i * offset_increment)
+        urls.append(url)
+    return urls
 
+def get_team_overview_htmls(from_file=False, update_files=False):
+
+    urls = get_team_overview_urls()
+    team_overview_htmls = _get_htmls(urls, from_file, category_key='team_overview')
+    if update_files and not from_file:
+        update_team_overview_htmls_jsons(team_overview_htmls)
+    return team_overview_htmls
