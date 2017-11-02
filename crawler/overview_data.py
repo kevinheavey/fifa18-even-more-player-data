@@ -63,4 +63,5 @@ def get_overview_data(from_file=False, update_files=True):
                'EUR_value', 'EUR_wage', 'Overall', 'Potential',
                'Special', 'Age']]
             .reset_index(drop=True)
+            .replace({'Club':{'':np.nan}})
             .pipe(standardise_col_names))
