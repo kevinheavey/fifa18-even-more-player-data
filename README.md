@@ -11,8 +11,9 @@ This repo contains both the dataset and the code used to scrape so-fifa.com.
     - The original project all takes place in a Jupyter notebook. I've rebuilt the crawler as a Python package.
     - The original project runs synchronously. I can only imagine that this takes several hours.
 3. I've stored the data using the .feather format alongside .csv - this is more convenient for Python and R users
-4. Column names now only contain letters, numbers and underscores. This is safer for most tools
-5. Fun
+4. Column names now only contain letters, numbers and underscores. This is safer for most analysis tools
+5. Cleanliness: I've pre-cleaned the data to a great extent. Most of this has involved converting strings to numerics (sometimes with some extra leg-work when dealing with inconsistent units)
+6. Fun
 
 ## Future improvements:
 
