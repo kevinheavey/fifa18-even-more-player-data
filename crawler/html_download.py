@@ -106,7 +106,7 @@ def get_team_overview_urls():
     urls = []
     base_url = 'https://sofifa.com/teams/?offset='
     offset_increment = 80
-    for i in range(8):
+    for i in range(9):
         url = base_url + str(i * offset_increment)
         urls.append(url)
     return urls
