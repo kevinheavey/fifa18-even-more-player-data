@@ -1,10 +1,8 @@
 from multiprocessing import Pool, cpu_count
-
 import pandas as pd
 from bs4 import BeautifulSoup, SoupStrainer
-
 from crawler.utils import convert_currency, standardise_col_names
-from .html_download import get_overview_htmls
+from crawler.html_download import get_overview_htmls
 
 
 def parse_single_row(overview_table_row):
