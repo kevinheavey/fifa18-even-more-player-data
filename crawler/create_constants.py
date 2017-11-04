@@ -51,7 +51,7 @@ def get_all_constants():
     special_attributes = ['International reputation', 'Skill moves',
                           'Weak foot', 'Work rate att', 'Work rate def',
                           'Preferred foot']
-    uncategorised = ['ID', 'full_name' 'Birth date', 'Release clause']
+    uncategorised = ['ID', 'full_name', 'Birth date', 'Release clause']
     test_ids = [192046, 233588, 211873, 190658, 220314,
                 186551, 193850, 11793, 190432, 189035]
     constants_dict = {'positions':positions,
