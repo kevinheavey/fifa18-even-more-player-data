@@ -216,7 +216,7 @@ def parse_player_detailed_data(player_htmls, constants):
                                     *constants['positions']]
     for col in numeric_cols_to_be_converted:
         df.loc[:, col] = pd.to_numeric(df[col], errors='ignore') #deal with errors later
-    return df[col_order].rename(columns={'Release clause':'Release_clause_EUR'})
+    return df[col_order].rename(columns={'Release clause':'EUR_release_clause'})
 
 
 def get_player_detailed_data(IDs, from_file=False, update_html_store=False):
