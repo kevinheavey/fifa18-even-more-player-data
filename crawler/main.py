@@ -44,8 +44,8 @@ def main(from_file=False, update_html_store=True, transfer_old_data=True):
     league_data = get_league_data(league_IDs, from_file, update_html_store)
     player_detailed_data = get_player_detailed_data(IDs, from_file)
     complete_data = (player_overview_data
-                     .merge(player_detailed_data, on='ID')
-                     .merge(league_data, on='club', how='left'))
+                     .merge(league_data, on='club', how='left')
+                     .merge(player_detailed_data, on='ID'))
     if transfer_old_data:
         update_data(player_overview_data, 'overview')
         update_data(player_detailed_data, 'player')
