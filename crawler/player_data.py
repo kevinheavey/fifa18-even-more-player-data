@@ -37,6 +37,7 @@ def parse_player_metadata(main_article):
     attribute_dict = {}
     player_info_soup = main_article.div.div.div
     stripped_strings = list(player_info_soup.span.stripped_strings)
+    attribute_dict['full_name'] = stripped_strings[0]
     attribute_dict['preferred_positions'] = stripped_strings[1:-1]
     age_height_weight = stripped_strings[-1].split()
     attribute_dict['Birth date'] = ' '.join(age_height_weight[2:5]).replace(',', '').strip('(').strip(')')
