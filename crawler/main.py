@@ -13,7 +13,7 @@ def save_data(data, category_key):
     feather_path = str(_FEATHER_FILEPATHS[version_key][category_key])
     data.to_feather(feather_path)
     csv_path = str(_CSV_FILEPATHS[version_key][category_key])
-    data.to_csv(csv_path, index=False)
+    data.to_csv(csv_path, index=False, encoding='utf_8')
 
 def move_if_exists(src, dst):
     try:
