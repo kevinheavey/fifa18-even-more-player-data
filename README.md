@@ -4,6 +4,8 @@
 
 This repo contains both the dataset and the code used to scrape so-fifa.com.
 
+See the dataset on Kaggle [here](https://www.kaggle.com/kevinmh/fifa-18-more-complete-player-dataset)
+
 ## Why fork the original project?
 
 1. I wanted more fields. This dataset contains extra fields such as International Reputation, traits and specialities.
