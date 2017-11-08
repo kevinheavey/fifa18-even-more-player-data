@@ -83,9 +83,16 @@ def get_complete_data(player_overview_data, league_data, player_detailed_data):
 
 def main(from_file=False, update_html_store=True, transfer_old_data=True):
     """Creates and exports the full dataset.
-    If from_file is set to False, then the crawler will be called to get all the html from scratch.
-    Then if update_html_store is set to True, the html .json files will be updated with the newly downloaded html.
-    Otherwise, the pre-existing .json files containing raw html will be used.
+
+    Parameters
+    ----------
+    from_file : Boolean, default False
+        If set to False, then the crawler will be called to download all the html from scratch.
+    update_html_store : Boolean, default True
+        If set to True and from_file is set to false, the html .json files will be updated with the newly downloaded html.
+        Otherwise, the pre-existing .json files containing raw html will be used.
+    transfer_old_data: Boolean, default True
+        Move the data in crawler/final/current to crawler/final/previous, instead of just overwriting it.
     """
 
     player_overview_data = get_overview_data(from_file, update_html_store)
