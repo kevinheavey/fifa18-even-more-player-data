@@ -22,4 +22,5 @@ See the dataset on Kaggle [here](https://www.kaggle.com/kevinmh/fifa-18-more-com
 - There are still a few fields that could be added if anyone wants them, such as contract expiry date.
 - Scrapy might speed things up
 - Tests
-- Building an archive (EA updates its player data regularly and it would be useful to be able to make comparisons between old versions)
+- Building an archive (EA updates its player data regularly and it would be useful to be able to make comparisons between old versions).
+We can go all the way back to FIFA 2007, and it shouldn't be too had to do so, although the execution time would be in the order of a few days if we scrape all past versions of the data. 
