@@ -60,7 +60,7 @@ def get_overview_data(from_file=False, update_files=True):
                                     'Special', 'Age']
     for col in numeric_cols_to_be_converted:
         df.loc[:, col] = pd.to_numeric(df[col])
-    return (df[['ID', 'Name', 'Club', 'Club logo', 'Flag', 'Photo',
+    return (df[['ID', 'Name', 'Club', 'Club logo', 'Flag', 'Photo', 'Nationality',
                'EUR_value', 'EUR_wage', 'Overall', 'Potential',
                'Special', 'Age']]
             .reset_index(drop=True)
