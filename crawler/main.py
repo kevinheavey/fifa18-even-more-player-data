@@ -33,7 +33,7 @@ def update_data(data, category_key):
 def get_complete_data(player_overview_data, league_data, player_detailed_data):
     col_order = ['ID', 'name', 'full_name', 'club', 'club_logo', 'special',
                  'age', 'league', 'birth_date', 'height_cm', 'weight_kg',
-                 'body_type', 'real_face', 'flag', 'photo', 'eur_value',
+                 'body_type', 'real_face', 'flag', 'nationality', 'photo', 'eur_value',
                  'eur_wage', 'eur_release_clause', 'overall', 'potential',
                  'pac', 'sho', 'pas', 'dri', 'def', 'phy', 'international_reputation',
                  'skill_moves', 'weak_foot', 'work_rate_att', 'work_rate_def',
