@@ -58,26 +58,28 @@ def _get_traits_and_specialities_dict(player_traits, player_specialities, all_tr
     return {**trait_dict, **speciality_dict}
 
 
-def parse_traits_and_specialities(col3_divs, all_traits, all_specialities):
-    last_div = col3_divs[-1]
-    if not last_div.text.strip():
+def parse_traits_and_specialities(traits_and_specialities_selector, all_traits, all_specialities):
+    div_selector = traits_and_specialities_selector.xpath('./body/div/div[last()]/div')
+    if not div_selector:
         player_traits, player_specialities = [np.nan], [np.nan]
     else:
-        uls = last_div.div.find_all('ul', recursive=False)
+        uls = div_selector.xpath('ul')
         n_uls = len(uls)
+        # if the player has both traits and specialities, we know traits come first
+        # if they only have traits or only specialities, we need to work out which
         if n_uls == 1:
             ul = uls[0]
             ul_strings = list(ul.stripped_strings)
-            ul_h5 = ul.parent.h5.text
-            if ul_h5 == 'Traits':
+            ul_h5_text = ul.xpath('../h5/text()').extract_first()
+            if ul_h5_text == 'Traits':
                 player_traits = ul_strings
                 player_specialities = [np.nan]
-            elif ul_h5 == 'Specialities':
+            elif ul_h5_text == 'Specialities':
                 player_traits = [np.nan]
                 player_specialities = ul_strings
         else:
-            player_traits = list(uls[0].stripped_strings)
-            player_specialities = list(uls[1].stripped_strings)
+            player_traits = uls[0].xpath('li/text()').extract()
+            player_specialities = uls[1].xpath('li/text()').extract()
     result = _get_traits_and_specialities_dict(player_traits, player_specialities, all_traits, all_specialities)
     return result
 
