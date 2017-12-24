@@ -83,14 +83,12 @@ def parse_traits_and_specialities(main_rectangle_selector_list, all_traits, all_
     return result
 
 
-def parse_player_miscellaneous_data(main_article):
-    ul = (main_article.div
-          .find('div', class_='teams', recursive=False)
-          .table.tr.ul)
-    attribute_dict = {}
-    strings = ul.stripped_strings
-    for key in strings:
-        attribute_dict[key] = next(strings)
+def parse_player_miscellaneous_data(main_rectangle_selector_list):
+
+    miscellaneous_info_div = main_rectangle_selector_list[0]
+    ul_selector = miscellaneous_info_div.xpath('./body/div/div[3]/table/tr/td[1]/ul[1]')[0]
+    strings = [x.strip() for x in ul_selector.xpath('.//text()').extract() if not x.isspace()]
+    attribute_dict = dict(zip(strings[::2], strings[1::2]))
     work_rates = attribute_dict.pop('Work rate').split(' / ')
     attribute_dict['Work rate att'] = work_rates[0]
     attribute_dict['Work rate def'] = work_rates[1]
