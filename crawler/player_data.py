@@ -93,24 +93,24 @@ def parse_player_miscellaneous_data(main_article):
     return attribute_dict
 
 
-def get_position_ratings(main_soup, main_article, all_positions):
+def get_position_ratings(position_ratings_selector, metadata_selector, all_positions):
     all_outfield_positions = [pos for pos in all_positions if pos != 'GK']
     position_col_name = 'Position'
-    ratings_div = main_soup.aside.find('div', class_='toast mb-20', recursive=False)
-    if ratings_div.h5.text == 'Real overall rating':
-        ratings_table = ratings_div.table
-        position_ratings_df = pd.read_html(str(ratings_table))[0][[position_col_name, 'OVA']]
+    div_selector = position_ratings_selector.xpath('./body/div')
+    if div_selector.xpath('h5/text()').extract_first() == 'Real overall rating':
+        ratings_table = div_selector.xpath('table').extract_first()
+        position_ratings_df = pd.read_html(ratings_table)[0][[position_col_name, 'OVA']]
         split_df = (position_ratings_df[position_col_name]
                     .str.split(expand=True)
                     .assign(OVA=position_ratings_df['OVA']))
-        position_ratings_dict = (
-        pd.concat(split_df[[i, 'OVA']].rename(columns={i: position_col_name}) for i in range(3))
-        .dropna()
-        .set_index(position_col_name)
-        .to_dict()['OVA'])
-        position_ratings_dict.update({'GK': np.nan})
+        position_ratings_dict = (split_df
+                                 .melt(id_vars='OVA', value_name=position_col_name)[['OVA', position_col_name]]
+                                 .dropna()
+                                 .set_index(position_col_name)
+                                 .to_dict()['OVA'])
+        position_ratings_dict['GK'] = np.nan
     else:
-        gk_rating = main_article.div.find('div', class_='stats', recursive=False).td.span.text
+        gk_rating = metadata_selector.xpath('./body/div/div[2]/table/tr/td[1]/span/text()').extract_first()
         position_ratings_dict = {'GK': gk_rating, **{pos: np.nan for pos in all_outfield_positions}}
     return position_ratings_dict
 
