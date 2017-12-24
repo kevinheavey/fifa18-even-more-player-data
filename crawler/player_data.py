@@ -1,25 +1,9 @@
 import pandas as pd
 import numpy as np
-from bs4 import BeautifulSoup, SoupStrainer
 from crawler.utils import parse_headline_attributes, read_constants, convert_currency, standardise_col_names
 from crawler.html_download import get_player_htmls
+import parsel
 from multiprocessing import Pool, cpu_count
-
-def _get_main_soup(soup):
-    return soup.find_all('section', recursive=False)[2]
-
-
-def _get_main_article(main_soup):
-    return main_soup.section.article
-
-
-def _get_col3_divs(main_article):
-    col_divs = (main_article
-                .find_all('div', class_='columns', recursive=False))
-    col3_divs = []
-    for sub_div in col_divs:
-        col3_divs.extend(sub_div.find_all('div', class_='col-3', recursive=False))
-    return col3_divs
 
 
 def parse_main_attributes(main_rectangle_selector):
@@ -68,7 +52,7 @@ def parse_traits_and_specialities(main_rectangle_selector_list, all_traits, all_
         # if they only have traits or only specialities, we need to work out which
         if n_uls == 1:
             ul = uls[0]
-            ul_strings = list(ul.stripped_strings)
+            ul_strings = ul.xpath('li/text()').extract()
             ul_h5_text = ul.xpath('../h5/text()').extract_first()
             if ul_h5_text == 'Traits':
                 player_traits = ul_strings
@@ -83,9 +67,9 @@ def parse_traits_and_specialities(main_rectangle_selector_list, all_traits, all_
     return result
 
 
-def parse_player_miscellaneous_data(main_rectangle_selector_list):
+def parse_player_miscellaneous_data(metadata_selector):
 
-    miscellaneous_info_div = main_rectangle_selector_list[0]
+    miscellaneous_info_div = metadata_selector
     ul_selector = miscellaneous_info_div.xpath('./body/div/div[3]/table/tr/td[1]/ul[1]')[0]
     strings = [x.strip() for x in ul_selector.xpath('.//text()').extract() if not x.isspace()]
     attribute_dict = dict(zip(strings[::2], strings[1::2]))
@@ -121,26 +105,28 @@ def get_full_position_preferences(preferred_positions_list, all_positions):
     return {'prefers_' + pos: (pos in preferred_positions_list) for pos in all_positions}
 
 
-def parse_single_player_page(url, html, strainer, constants):
-
+def parse_single_player_page(url, html_dict, constants):
     player_id = id_from_url(url)
-    soup = BeautifulSoup(html, 'lxml', parse_only=strainer)
+    headline_attributes_selector = parsel.Selector(html_dict['headline_attributes'])
+    # actually the line below is the first three divs under the main article
+    main_article_selector_list = parsel.SelectorList(parsel.Selector(item) for item in html_dict['main'])
+    metadata_selector = main_article_selector_list[0]
+    main_rectangle_selector_list = main_article_selector_list[1:]
+    position_ratings_selector = parsel.Selector(html_dict['position_ratings'])
+
     all_traits = constants['traits']
     all_specialities = constants['specialities']
     all_positions = constants['positions']
 
-    main_soup = _get_main_soup(soup)
-    main_article = _get_main_article(main_soup)
-    col3_divs = _get_col3_divs(main_article)
-    main_attributes = parse_main_attributes(col3_divs)
-    headline_attributes = parse_headline_attributes(soup)
-    metadata = parse_player_metadata(main_article)
+    main_attributes = parse_main_attributes(main_rectangle_selector_list)
+    headline_attributes = parse_headline_attributes(headline_attributes_selector)
+    metadata = parse_player_metadata(metadata_selector)
     _preferred_positions = metadata.pop('preferred_positions')
-    traits_and_specialities = parse_traits_and_specialities(col3_divs, all_traits, all_specialities)
-    miscellaneous_data = parse_player_miscellaneous_data(main_article)
-    position_ratings = get_position_ratings(main_soup, main_article, all_positions)
+    traits_and_specialities = parse_traits_and_specialities(main_rectangle_selector_list, all_traits, all_specialities)
+    miscellaneous_data = parse_player_miscellaneous_data(metadata_selector)
+    position_ratings = get_position_ratings(position_ratings_selector, metadata_selector, all_positions)
     position_preferences = get_full_position_preferences(_preferred_positions, all_positions)
-    return {'ID':player_id, **main_attributes, **headline_attributes, **metadata,
+    return {'ID': player_id, **main_attributes, **headline_attributes, **metadata,
             **traits_and_specialities, **miscellaneous_data, **position_ratings,
             **position_preferences}
 
@@ -187,12 +173,7 @@ def _convert_weight_col(weight_series):
 
 def parse_player_detailed_data(player_htmls, constants):
     pool = Pool(cpu_count())
-    strainer = SoupStrainer(['section', 'script'])
-    # data = []
-    # for url, html in player_htmls.items():
-    #     row_dict = parse_single_player_page(url, html, strainer, constants)
-    #     data.append(row_dict)
-    func_args = [(url, html, strainer, constants) for url, html in player_htmls.items()]
+    func_args = [(url, html, constants) for url, html in player_htmls.items()]
     data = pool.starmap(parse_single_player_page, func_args)
     df = pd.DataFrame(data)
     col_order = [*constants['uncategorised'],
