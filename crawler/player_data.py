@@ -33,16 +33,19 @@ def parse_main_attributes(col3_divs):
     return attribute_dict
 
 
-def parse_player_metadata(main_article):
+def parse_player_metadata(metadata_selector):
+
     attribute_dict = {}
-    player_info_soup = main_article.div.div.div
-    stripped_strings = list(player_info_soup.span.stripped_strings)
-    attribute_dict['full_name'] = stripped_strings[0]
-    attribute_dict['preferred_positions'] = stripped_strings[1:-1]
-    age_height_weight = stripped_strings[-1].split()
+    span_selector = metadata_selector.xpath('./body/div/div[1]/div/span')
+    subspan_selector = span_selector.xpath('span')
+    span_strings = span_selector.xpath('text()').extract()
+    subspan_strings = subspan_selector.xpath('text()').extract()
+    attribute_dict['full_name'] = span_strings[0].strip()
+    age_height_weight = span_strings[-1].split()
     attribute_dict['Birth date'] = ' '.join(age_height_weight[2:5]).replace(',', '').strip('(').strip(')')
     attribute_dict['Height_cm'] = age_height_weight[5].strip('cm')
     attribute_dict['Weight_kg'] = age_height_weight[-1].strip('kg')
+    attribute_dict['preferred_positions'] = subspan_strings[1:-1]
 
     return attribute_dict
 
