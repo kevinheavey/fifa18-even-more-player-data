@@ -20,10 +20,11 @@ def headline_attribute_from_line(line):
     return {'name': attribute_name, 'value': attribute_value}
 
 
-def parse_headline_attributes(soup):
+def parse_headline_attributes(headline_attributes_selector):
     attribute_dict = {}
-    headline_attribute_script = soup.find_all('script', recursive=False)[1]
-    for line in headline_attribute_script.text.split('\r\n'):
+    # note xpath is 1-indexed
+    headline_attribute_script = headline_attributes_selector.xpath('./head/script')
+    for line in headline_attribute_script.extract_first().split('\r\n'):
         if 'point' in line:
             attr_subdict = headline_attribute_from_line(line)
             attribute_dict[attr_subdict['name']] = attr_subdict['value']
