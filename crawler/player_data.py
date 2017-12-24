@@ -22,15 +22,14 @@ def _get_col3_divs(main_article):
     return col3_divs
 
 
-def parse_main_attributes(col3_divs):
-    attribute_dict = {}
-    for sub_div in col3_divs[:-1]:  # last one is traits and specialities
-        for li in sub_div.div.ul.find_all('li', recursive=False):
-            stripped_strings = list(li.stripped_strings)
-            attribute_name = stripped_strings[-1]
-            attribute_value = stripped_strings[0]
-            attribute_dict[attribute_name] = attribute_value
-    return attribute_dict
+def parse_main_attributes(main_rectangle_selector):
+
+    sub_div_selectors = main_rectangle_selector.xpath('./body/div/div')[:-1]
+    # last one is traits and specialities, which we don't want here
+    li_selectors = sub_div_selectors.xpath('div/ul/li')
+    attribute_names = [name.strip() for name in li_selectors.xpath('text()').extract() if not name.isspace()]
+    attribute_values = li_selectors.xpath('span/text()').extract()
+    return dict(zip(attribute_names, attribute_values))
 
 
 def parse_player_metadata(metadata_selector):
@@ -58,8 +57,8 @@ def _get_traits_and_specialities_dict(player_traits, player_specialities, all_tr
     return {**trait_dict, **speciality_dict}
 
 
-def parse_traits_and_specialities(traits_and_specialities_selector, all_traits, all_specialities):
-    div_selector = traits_and_specialities_selector.xpath('./body/div/div[last()]/div')
+def parse_traits_and_specialities(main_rectangle_selector_list, all_traits, all_specialities):
+    div_selector = main_rectangle_selector_list[1].xpath('./body/div/div[last()]/div')
     if not div_selector:
         player_traits, player_specialities = [np.nan], [np.nan]
     else:
