@@ -3,7 +3,7 @@ import shutil
 
 import numpy as np
 import requests
-from bs4 import BeautifulSoup, SoupStrainer
+import parsel
 
 from crawler.utils import parse_headline_attributes, CURRENT_PATH, PREVIOUS_PATH
 
@@ -25,9 +25,10 @@ def get_all_traits_and_specialities():
 def get_headline_attribute_names():
     url = 'https://sofifa.com/player/158023'
     html = requests.get(url).text
-    strainer = SoupStrainer('script')
-    soup = BeautifulSoup(html, 'lxml', parse_only=strainer)
-    return list(parse_headline_attributes(soup).keys())
+    # below is a hacky way to get a selector that fits the parse_headline_attributes function
+    script_html = parsel.Selector(text=html).xpath('/html/body/script[1]').extract_first()
+    selector = parsel.Selector(script_html)
+    return list(parse_headline_attributes(selector).keys())
 
 
 
