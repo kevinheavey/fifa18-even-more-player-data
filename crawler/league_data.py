@@ -1,20 +1,19 @@
 from multiprocessing import Pool, cpu_count
 import pandas as pd
-from bs4 import BeautifulSoup, SoupStrainer
+import parsel
 from crawler.html_download import get_league_overview_html, get_league_htmls
 
 def get_league_IDs(from_file=False, update_files=False):
     html = get_league_overview_html(from_file, update_files)
-    strainer = SoupStrainer('tbody')
-    soup = BeautifulSoup(html, 'lxml', parse_only=strainer)
+    selector = parsel.Selector(html)
     league_id_dict = {}
-    for row in soup.tbody.find_all('tr', recursive=False):
-        league_hyperlink = row.find_all('td', recursive=False)[1].a
-        league_id = league_hyperlink['href'].split('/')[-1]
+    for row_selector in selector.xpath('./body/table/tbody/tr'):
+        league_hyperlink_selector = row_selector.xpath('td[2]/a')
+        league_id = league_hyperlink_selector.xpath('@href').extract_first().split('/')[-1]
         # the league name contains a (number) at the end to indicate what level the league is
         # e.g. English Championship (2)
         # we're currently getting rid of this but we may later decide to use it
-        league_name = league_hyperlink.text.rsplit(' ', maxsplit=1)[0]
+        league_name = league_hyperlink_selector.xpath('text()').extract_first().rsplit(' ', maxsplit=1)[0]
         league_id_dict[league_id] = league_name
     return league_id_dict
 
