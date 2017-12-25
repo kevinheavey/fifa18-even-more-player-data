@@ -1,46 +1,54 @@
 from multiprocessing import Pool, cpu_count
 import pandas as pd
 import numpy as np
-from bs4 import BeautifulSoup, SoupStrainer
+import parsel
 from crawler.utils import convert_currency, standardise_col_names
 from crawler.html_download import get_overview_htmls
 
 
-def parse_single_row(overview_table_row):
+def parse_single_row(row_selector):
 
     record_dict = {}
-    tds = overview_table_row.find_all('td', recursive=False)
-    record_dict['Photo'] = tds[0].find('img').get('data-src')
-    record_dict['ID'] = tds[0].find('img').get('id')
-    record_dict['Nationality'] = tds[1].find('a').get('title')
-    record_dict['Flag'] = tds[1].find('img').get('data-src')
-    record_dict['Name'] = tds[1].find_all('a')[1].text
-    record_dict['Age'] = tds[2].find('div').text.strip()
-    record_dict['Overall'] = tds[3].text.strip()
-    record_dict['Potential'] = tds[4].text.strip()
-    record_dict['Club'] = tds[5].find('a').text
-    record_dict['Club logo'] = tds[5].find('img').get('data-src')
-    record_dict['Value'] = tds[7].text
-    record_dict['Wage'] = tds[8].text
-    record_dict['Special'] = tds[17].text
+    td_selectors = row_selector.xpath('td')
+    popover_div = td_selectors[0].xpath('div')
+    if popover_div:
+        player_img_selector = popover_div.xpath('figure/img')
+    else:
+        player_img_selector = td_selectors[0].xpath('figure/img')
+    record_dict['Photo'] = player_img_selector.xpath('@data-src').extract_first().replace('/48/', '/')
+    record_dict['ID'] = player_img_selector.xpath('@id').extract_first()
+    namecol_hyperlink_selectors = td_selectors[1].xpath('div/a')
+    record_dict['Nationality'] = namecol_hyperlink_selectors[0].xpath('@title').extract_first()
+    record_dict['Flag'] = namecol_hyperlink_selectors[0].xpath('img/@data-src').extract_first().replace('.p', '@3x.p')
+    record_dict['Name'] = namecol_hyperlink_selectors[1].xpath('text()').extract_first()
+    record_dict['Age'] = td_selectors[2].xpath('div/text()').extract_first().strip()
+    record_dict['Overall'] = td_selectors[3].xpath('div/span/text()').extract_first().strip()
+    record_dict['Potential'] = td_selectors[4].xpath('div/span/text()').extract_first().strip()
+    record_dict['Club'] = td_selectors[5].xpath('div/a/text()').extract_first()
+    club_logo = td_selectors[5].xpath('div/figure/img/@data-src').extract_first()
+    if club_logo:
+        record_dict['Club logo'] = club_logo.replace('/24/', '/')
+    else:
+        record_dict['Club logo'] = club_logo
+    record_dict['Value'] = td_selectors[7].xpath('div/text()').extract_first()
+    record_dict['Wage'] = td_selectors[8].xpath('div/text()').extract_first()
+    record_dict['Special'] = td_selectors[17].xpath('div/mark/text()').extract_first()
 
     return record_dict
 
 
-def parse_single_overview_page(html, strainer):
-    soup = BeautifulSoup(html, 'lxml', parse_only=strainer)
+def parse_single_overview_page(html):
+    table_selector = parsel.Selector(html)
     row_dicts = []
-    for row in soup.tbody.find_all('tr', recursive=False):
-        row_dicts.append(parse_single_row(row))
+    for row_selector in table_selector.xpath('./body/table/tbody/tr'):
+        row_dicts.append(parse_single_row(row_selector))
     return row_dicts
 
 
 def parse_overview_data(overview_htmls):
     pool = Pool(cpu_count())
-    strainer = SoupStrainer('tbody')
     htmls = list(overview_htmls.values())
-    func_args = [(h, strainer) for h in htmls]
-    data_lists = pool.starmap(parse_single_overview_page, func_args)
+    data_lists = pool.map(parse_single_overview_page, htmls)
     data = []
     for sub_list in data_lists:
         data.extend(sub_list)
@@ -53,7 +61,7 @@ def clean_overview_data(df):
                     EUR_wage = lambda df: df['Wage'].pipe(convert_currency))
             .drop(['Value', 'Wage'], axis=1))
 
-def get_overview_data(from_file=False, update_files=True):
+def get_overview_data(from_file=False, update_files=False):
     overview_htmls = get_overview_htmls(from_file, update_files)
     df = parse_overview_data(overview_htmls).pipe(clean_overview_data)
     numeric_cols_to_be_converted = ['ID', 'Overall', 'Potential',
