@@ -21,14 +21,14 @@ def parse_player_metadata(metadata_selector):
     attribute_dict = {}
     span_selector = metadata_selector.xpath('./body/div/div[1]/div/span')
     subspan_selector = span_selector.xpath('span')
-    span_strings = span_selector.xpath('text()').extract()
-    subspan_strings = subspan_selector.xpath('text()').extract()
+    span_strings = [s.strip() for s in span_selector.xpath('text()').extract()]
+    subspan_strings = [s.strip() for s in subspan_selector.xpath('text()').extract()]
     attribute_dict['full_name'] = span_strings[0].strip()
     age_height_weight = span_strings[-1].split()
     attribute_dict['Birth date'] = ' '.join(age_height_weight[2:5]).replace(',', '').strip('(').strip(')')
     attribute_dict['Height_cm'] = age_height_weight[5].strip('cm')
     attribute_dict['Weight_kg'] = age_height_weight[-1].strip('kg')
-    attribute_dict['preferred_positions'] = subspan_strings[1:-1]
+    attribute_dict['preferred_positions'] = subspan_strings
 
     return attribute_dict
 
@@ -52,8 +52,8 @@ def parse_traits_and_specialities(main_rectangle_selector_list, all_traits, all_
         # if they only have traits or only specialities, we need to work out which
         if n_uls == 1:
             ul = uls[0]
-            ul_strings = ul.xpath('li/text()').extract()
-            ul_h5_text = ul.xpath('../h5/text()').extract_first()
+            ul_strings = [s.strip() for s in ul.xpath('li/text()').extract()]
+            ul_h5_text = ul.xpath('../h5/text()').extract_first().strip()
             if ul_h5_text == 'Traits':
                 player_traits = ul_strings
                 player_specialities = [np.nan]
@@ -61,8 +61,8 @@ def parse_traits_and_specialities(main_rectangle_selector_list, all_traits, all_
                 player_traits = [np.nan]
                 player_specialities = ul_strings
         else:
-            player_traits = uls[0].xpath('li/text()').extract()
-            player_specialities = uls[1].xpath('li/text()').extract()
+            player_traits = [s.strip() for s in uls[0].xpath('li/text()').extract()]
+            player_specialities = [s.strip() for s in uls[1].xpath('li/text()').extract()]
     result = _get_traits_and_specialities_dict(player_traits, player_specialities, all_traits, all_specialities)
     return result
 
