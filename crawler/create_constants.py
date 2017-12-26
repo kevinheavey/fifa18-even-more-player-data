@@ -1,6 +1,5 @@
 import json
 import shutil
-
 import numpy as np
 import requests
 import parsel
@@ -11,15 +10,18 @@ from crawler.utils import parse_headline_attributes, CURRENT_PATH, PREVIOUS_PATH
 def get_all_traits_and_specialities():
     url = 'https://sofifa.com/players/top'
     html = requests.get(url).text
-    strainer = SoupStrainer('form', action='/players', class_='pjax relative')
-    soup = BeautifulSoup(html, 'lxml', parse_only=strainer)
-    traits1 = list(soup.find(attrs={'name': 't1[]'}).stripped_strings)
-    traits2 = list(soup.find(attrs={'name': 't2[]'}).stripped_strings)
-    all_traits = list(np.unique([*traits1, *traits2])) # some traits are duplicated unfortunately
-    all_traits = [t + '_trait' for t in all_traits]
-    all_specialities = list(soup.find(attrs={'name': 'sc[]'}).stripped_strings)
-    # avoid duplicating the strength speciality name with the strength attribute
-    all_specialities = [s + '_speciality' for s in all_specialities]
+    selector = parsel.Selector(html)
+    path = './body/section[1]/section[1]/aside[1]/form[1]/div[last()]/div[position() >= last() - 2]/select'
+    relevant = selector.xpath(path)
+    end_of_path = 'option/text()'
+    traits_raw = relevant[:2].xpath(end_of_path).extract()
+    # some traits are duplicated unfortunately
+    traits = list(np.unique([t.strip() for t in traits_raw if t != 'trait.']))
+    all_traits = [t + '_trait' for t in traits]
+    specialities_raw = relevant[2].xpath(end_of_path).extract()
+    # it's important to add the speciality flag
+    # because there is a strength speciality and a strength attribute
+    all_specialities = [s.strip() + '_speciality' for s in specialities_raw]
     return {'traits': all_traits, 'specialities': all_specialities}
 
 def get_headline_attribute_names():
