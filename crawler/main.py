@@ -81,6 +81,7 @@ def get_complete_data(player_overview_data, league_data, player_detailed_data):
                      .merge(player_detailed_data, on='ID'))[col_order]
     return complete_data
 
+
 def main(from_file=False, update_html_store=True, transfer_old_data=True):
     """Creates and exports the full dataset.
 

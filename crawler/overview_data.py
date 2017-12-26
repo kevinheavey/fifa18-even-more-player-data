@@ -61,8 +61,8 @@ def clean_overview_data(df):
                     EUR_wage = lambda df: df['Wage'].pipe(convert_currency))
             .drop(['Value', 'Wage'], axis=1))
 
-def get_overview_data(from_file=False, update_files=False):
-    overview_htmls = get_overview_htmls(from_file, update_files)
+def get_overview_data(from_file=False, update_html_store=False):
+    overview_htmls = get_overview_htmls(from_file, update_html_store)
     df = parse_overview_data(overview_htmls).pipe(clean_overview_data)
     numeric_cols_to_be_converted = ['ID', 'Overall', 'Potential',
                                     'Special', 'Age']

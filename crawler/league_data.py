@@ -2,8 +2,8 @@ import pandas as pd
 import parsel
 from crawler.html_download import get_league_overview_html, get_league_htmls
 
-def get_league_IDs(from_file=False, update_files=False):
-    html = get_league_overview_html(from_file, update_files)
+def get_league_IDs(from_file=False, update_html_store=False):
+    html = get_league_overview_html(from_file, update_html_store)
     selector = parsel.Selector(html)
     league_id_dict = {}
     for row_selector in selector.xpath('./body/table/tbody/tr'):
